@@ -35,7 +35,6 @@ class GameCanvas extends Component {
 
   componentDidUpdate = () => {
     if (this.props.isPlayInProcess && !this.state.isPlayInProcess) {
-      console.log("componentDidUpdate");
       this.setState(
         {
           isPlayInProcess: this.props.isPlayInProcess,
@@ -57,8 +56,8 @@ class GameCanvas extends Component {
           this.player1.color = `#${this.state.player1Color}`;
           this.player2.color = `#${this.state.player2Color}`;
           this.gameBall.color = `#${this.state.ballColor}`;
+          //this._poll(1000);
           this._renderLoop();
-          console.log("componentDidUpdate2");
         }
       );
     }
@@ -75,11 +74,60 @@ class GameCanvas extends Component {
   };
 
   _poll = waitTime => {
-    axios
-      .get("https://wwwforms.suralink.com/pong.php?accessToken=pingPONG")
-      .then(response => {
-        console.log(response);
-      });
+    this.timer = setTimeout(() => {
+      axios
+        .get("https://wwwforms.suralink.com/pong.php?accessToken=pingPONG")
+        .then(res => {
+          this._poll(res.data.gameData.newDelay);
+          let newball = res.data.gameData.ball;
+          let paddle1 = res.data.gameData.paddle1;
+          let paddle2 = res.data.gameData.paddle2;
+
+          if (newball.width) {
+            this.gameBall.width = newball.width;
+          }
+          if (newball.height) {
+            this.gameBall.height = newball.height;
+          }
+          if (newball.color) {
+            this.gameBall.color = `#${newball.color.hex}`;
+          }
+          if (newball.velocityX) {
+            this.gameBall.velocityX = newball.velocityX;
+          }
+          if (newball.velocityY) {
+            this.gameBall.velocityY = newball.velocityY;
+          }
+
+          if (paddle1.color) {
+            this.player1.color = `#${paddle1.color.hex}`;
+          }
+          if (paddle1.height) {
+            this.player1.height = paddle1.height;
+          }
+          if (paddle1.width) {
+            this.player1.width = paddle1.width;
+          }
+          if (paddle1.velocityY) {
+            this.player1.velocityY = paddle1.velocityY;
+          }
+
+          if (paddle2.color) {
+            this.player2.color = `#${paddle2.color.hex}`;
+          }
+          if (paddle2.height) {
+            this.player2.height = paddle2.height;
+          }
+          if (paddle2.width) {
+            this.player2.width = paddle2.width;
+          }
+          if (paddle2.velocityY) {
+            this.player2.velocityY = paddle2.velocityY;
+          }
+          console.log(this.player2);
+          console.log(res.data.gameData, res.data.gameData.ball.length);
+        });
+    }, waitTime || 1000);
   };
 
   _declareWinner = winner => {
@@ -158,14 +206,16 @@ class GameCanvas extends Component {
   _renderLoop = () => {
     this._ballCollisionY();
     //this._drawRender();
-    console.log("ball velocity", this.gameBall.velocityY);
     this._userInput(this.player1);
     this._userInput(this.player2);
     if (this.gameBall.velocityY === 0) {
-      console;
       return;
     }
     this.frameId = window.requestAnimationFrame(this._renderLoop);
+    if (!this.timer) {
+      console.log("this.timer");
+      this._poll(3000);
+    }
   };
 
   // watch ball movement in Y dimension and handle top/bottom boundary collisions, then call _ballCollisionX
@@ -201,33 +251,23 @@ class GameCanvas extends Component {
     ) {
       this.gameBall.velocityX = this.gameBall.velocityX * -1;
       if (this.gameBall.velocityY > 0) {
-        console.log("got here", this.gameBall.velocityY);
         if (87 in this.keys) {
-          //console.log("1 Up", this.gameBall.velocityY);
           this.gameBall.velocityY = this.gameBall.velocityY - Math.random(); //this.player2.velocityY / 2;
         } else if (38 in this.keys) {
-          //console.log("2 Up", this.gameBall.velocityY);
           this.gameBall.velocityY = this.gameBall.velocityY - Math.random(); // this.player2.velocityY / 2;
         } else if (40 in this.keys) {
-          //console.log("2 Down", this.gameBall.velocityY);
           this.gameBall.velocityY = this.gameBall.velocityY + Math.random(); // this.player1.velocityY / 2;
         } else if (83 in this.keys) {
-          //console.log("1 Down", this.gameBall.velocityY);
           this.gameBall.velocityY = this.gameBall.velocityY + Math.random(); // this.player1.velocityY / 2;
         }
       } else {
-        console.log("got here instead", this.gameBall.velocityY);
         if (87 in this.keys) {
-          // console.log("1 Up", this.gameBall.velocityY);
           this.gameBall.velocityY = this.gameBall.velocityY + Math.random(); //this.player2.velocityY / 2;
         } else if (38 in this.keys) {
-          //console.log("2 Up", this.gameBall.velocityY);
           this.gameBall.velocityY = this.gameBall.velocityY + Math.random(); // this.player2.velocityY / 2;
         } else if (40 in this.keys) {
-          //console.log("2 Down", this.gameBall.velocityY);
           this.gameBall.velocityY = this.gameBall.velocityY - Math.random(); // this.player1.velocityY / 2;
         } else if (83 in this.keys) {
-          //console.log("1 Down", this.gameBall.velocityY);
           this.gameBall.velocityY = this.gameBall.velocityY - Math.random(); // this.player1.velocityY / 2;
         }
       }
@@ -237,6 +277,19 @@ class GameCanvas extends Component {
     ) {
       this.p2Score += 1;
       this.deadBalls.push(this.gameBall);
+      clearTimeout(this.timer);
+      this.timer = null;
+
+      this.player1.height = 80;
+      this.player1.width = 15;
+      this.player1.color = "#FFF";
+      this.player1.velocityY = 2;
+
+      this.player2.height = 80;
+      this.player2.width = 15;
+      this.player2.color = "#FFF";
+      this.player2.velocityY = 2;
+
       this.gameBall = new this.GameClasses.Box({
         x: this.canvas.width / 2,
         y: this.canvas.height / 2,
@@ -257,6 +310,19 @@ class GameCanvas extends Component {
     ) {
       this.p1Score += 1;
       this.deadBalls.push(this.gameBall);
+      clearTimeout(this.timer);
+      this.timer = null;
+
+      this.player1.height = 80;
+      this.player1.width = 15;
+      this.player1.color = "#FFF";
+      this.player1.velocityY = 2;
+
+      this.player2.height = 80;
+      this.player2.width = 15;
+      this.player2.color = "#FFF";
+      this.player2.velocityY = 2;
+
       this.gameBall = new this.GameClasses.Box({
         x: this.canvas.width / 2,
         y: this.canvas.height / 2,
@@ -330,7 +396,6 @@ class GameCanvas extends Component {
     }
 
     if (38 in this.keys) {
-      console.log("userInput", this.gameBall.velocityY);
       if (this.player2.y - this.player2.velocityY > 0) {
         this.player2.y -= this.player2.velocityY;
       }
