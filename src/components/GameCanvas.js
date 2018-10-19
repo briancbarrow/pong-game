@@ -33,6 +33,14 @@ class GameCanvas extends Component {
     this._drawRender();
   };
 
+  componentWillUnmount = () => {
+    window.removeEventListener("keydown", e => {
+      this.keys[e.keyCode] = 1;
+      if (e.target.nodeName !== "INPUT") e.preventDefault();
+    });
+    window.removeEventListener("keyup", e => delete this.keys[e.keyCode]);
+  };
+
   componentDidUpdate = () => {
     if (this.props.isPlayInProcess && !this.state.isPlayInProcess) {
       this.setState(
@@ -56,7 +64,8 @@ class GameCanvas extends Component {
           this.player1.color = `#${this.state.player1Color}`;
           this.player2.color = `#${this.state.player2Color}`;
           this.gameBall.color = `#${this.state.ballColor}`;
-          //this._poll(1000);
+
+          // start render loop
           this._renderLoop();
         }
       );
@@ -124,8 +133,6 @@ class GameCanvas extends Component {
           if (paddle2.velocityY) {
             this.player2.velocityY = paddle2.velocityY;
           }
-          console.log(this.player2);
-          console.log(res.data.gameData, res.data.gameData.ball.length);
         });
     }, waitTime || 1000);
   };
@@ -139,12 +146,8 @@ class GameCanvas extends Component {
       },
       this.props.onGameEnd()
     );
-    // this.setState((state, props) => ({
-    //   isPlayInProcess: props.isPlayInProcess
-    // }));
 
     document.getElementById("winnerBox").innerHTML = `${winner} is the winner!`;
-    //window.cancelAnimationFrame(this.frameId);
   };
 
   _initializeGameCanvas = () => {
@@ -197,15 +200,11 @@ class GameCanvas extends Component {
       velocityX: this.state.velocity,
       velocityY: this.state.velocity
     });
-
-    // start render loop
-    //this._renderLoop();
   };
 
   // recursively process game state and redraw canvas
   _renderLoop = () => {
     this._ballCollisionY();
-    //this._drawRender();
     this._userInput(this.player1);
     this._userInput(this.player2);
     if (this.gameBall.velocityY === 0) {
@@ -213,7 +212,6 @@ class GameCanvas extends Component {
     }
     this.frameId = window.requestAnimationFrame(this._renderLoop);
     if (!this.timer) {
-      console.log("this.timer");
       this._poll(3000);
     }
   };
@@ -333,7 +331,6 @@ class GameCanvas extends Component {
         velocityY: this.state.velocity
       });
       if (this.p1Score === this.props.maxScore) {
-        //alert("Player 1 wins!");
         this.p1Score = this.p2Score = 0;
         this._declareWinner("Player 1");
         this._drawRender();
