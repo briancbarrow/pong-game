@@ -15,6 +15,13 @@ const GameControls = props => {
       <br />
       <label htmlFor="ballColor">Ball Color</label>
       <input id="ballColor" defaultValue="FF0000" />
+      <label htmlFor="singlePlayer">Single Player?</label>
+      <input
+        id="singlePlayer"
+        defaultChecked={props.singlePlayer}
+        onChange={props.handleCheckbox}
+        type="checkbox"
+      />
       <button
         onClick={() =>
           props.onUpdate(

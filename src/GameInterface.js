@@ -11,7 +11,9 @@ class GameInterface extends Component {
       isPlayInProcess: false,
       velocity: 1,
       player1Color: "fff",
-      player2Color: "fff"
+      player2Color: "fff",
+      ballColor: "ff0000",
+      singlePlayer: true
     };
   }
 
@@ -25,6 +27,12 @@ class GameInterface extends Component {
       player1Color: player1Color,
       player2Color: player2Color,
       ballColor: ballColor
+    });
+  };
+
+  handleCheckbox = () => {
+    this.setState({
+      singlePlayer: !this.state.singlePlayer
     });
   };
 
@@ -70,11 +78,14 @@ class GameInterface extends Component {
             player1Color={this.state.player1Color}
             player2Color={this.state.player2Color}
             ballColor={this.state.ballColor}
+            singlePlayer={this.state.singlePlayer}
           />
           <GameControls
             maxScore={this.state.maxScore}
             velocity={this.state.velocity}
             onUpdate={this.updateAll}
+            singlePlayer={this.state.singlePlayer}
+            handleCheckbox={this.handleCheckbox}
           />
 
           <h2 id="winnerBox" />

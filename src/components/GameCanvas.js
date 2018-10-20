@@ -11,7 +11,8 @@ class GameCanvas extends Component {
       velocity: 1,
       player1Color: "FFF",
       player2Color: "FFF",
-      ballColor: "FF0000"
+      ballColor: "FF0000",
+      singlePlayer: true
     };
   }
 
@@ -25,7 +26,8 @@ class GameCanvas extends Component {
         velocity: this.props.velocity,
         player1Color: this.props.player1Color,
         player2Color: this.props.player2Color,
-        ballColor: this.props.ballColor
+        ballColor: this.props.ballColor,
+        singlePlayer: this.props.singlePlayer
       },
       this._initializeGameCanvas()
     );
@@ -48,7 +50,8 @@ class GameCanvas extends Component {
           isPlayInProcess: this.props.isPlayInProcess,
           player1Color: this.props.player1Color,
           player2Color: this.props.player2Color,
-          ballColor: this.props.ballColor
+          ballColor: this.props.ballColor,
+          singlePlayer: this.props.singlePlayer
         },
         () => {
           this.gameBall.velocityX = this.gameBall.velocityY = this.state.velocity;
@@ -179,6 +182,10 @@ class GameCanvas extends Component {
   _declareWinner = winner => {
     this.gameBall.velocityX = this.gameBall.velocityY = 0;
     this.deadBalls = [];
+    delete this.keys[38];
+    delete this.keys[40];
+    clearInterval(this.downInterval);
+    clearInterval(this.upInterval);
     this.setState(
       {
         isPlayInProcess: false
@@ -253,7 +260,7 @@ class GameCanvas extends Component {
     if (!this.timer) {
       this._poll(3000);
     }
-    if (!this.aiTimer) {
+    if (!this.aiTimer && this.state.singlePlayer) {
       this._compAI();
     }
   };
