@@ -18,7 +18,6 @@ class GameInterface extends Component {
   updateAll = (score, velocity, player1Color, player2Color, ballColor) => {
     score = parseInt(score, 10);
     velocity = parseInt(velocity, 10);
-    console.log("updateAll");
     this.setState({
       maxScore: score,
       isPlayInProcess: true,

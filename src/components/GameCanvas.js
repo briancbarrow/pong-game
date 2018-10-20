@@ -82,6 +82,45 @@ class GameCanvas extends Component {
     }
   };
 
+  _compAI = bool => {
+    let aiDelay = 1 + Math.random() * 1500;
+    let _this = this;
+    let arrowDown = new Event("keydown");
+    arrowDown.key = "ArrowDown";
+    arrowDown.keyCode = 40;
+    arrowDown.which = arrowDown.keyCode;
+    arrowDown.altKey = false;
+    arrowDown.ctrlKey = true;
+    arrowDown.shiftKey = false;
+    arrowDown.metaKey = false;
+    let arrowUp = new Event("keydown");
+    arrowUp.key = "ArrowUp";
+    arrowUp.keyCode = 38;
+    arrowUp.which = arrowUp.keyCode;
+    arrowUp.altKey = false;
+    arrowUp.ctrlKey = true;
+    arrowUp.shiftKey = false;
+    arrowUp.metaKey = false;
+    this.aiTimer = setTimeout(() => {
+      if (bool) {
+        delete _this.keys[arrowUp.keyCode];
+        clearInterval(_this.upInterval);
+        clearInterval(_this.downInterval);
+        _this.downInterval = setInterval(function() {
+          window.dispatchEvent(arrowDown);
+        }, 1);
+      } else {
+        delete _this.keys[arrowDown.keyCode];
+        clearInterval(_this.downInterval);
+        clearInterval(_this.upInterval);
+        _this.upInterval = setInterval(function() {
+          window.dispatchEvent(arrowUp);
+        }, 1);
+      }
+      _this._compAI(!bool);
+    }, aiDelay);
+  };
+
   _poll = waitTime => {
     this.timer = setTimeout(() => {
       axios
@@ -214,6 +253,9 @@ class GameCanvas extends Component {
     if (!this.timer) {
       this._poll(3000);
     }
+    if (!this.aiTimer) {
+      this._compAI();
+    }
   };
 
   // watch ball movement in Y dimension and handle top/bottom boundary collisions, then call _ballCollisionX
@@ -276,7 +318,9 @@ class GameCanvas extends Component {
       this.p2Score += 1;
       this.deadBalls.push(this.gameBall);
       clearTimeout(this.timer);
+      clearTimeout(this.aiTimer);
       this.timer = null;
+      this.aiTimer = null;
 
       this.player1.height = 80;
       this.player1.width = 15;
@@ -309,7 +353,9 @@ class GameCanvas extends Component {
       this.p1Score += 1;
       this.deadBalls.push(this.gameBall);
       clearTimeout(this.timer);
+      clearTimeout(this.aiTimer);
       this.timer = null;
+      this.aiTimer = null;
 
       this.player1.height = 80;
       this.player1.width = 15;
