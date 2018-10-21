@@ -86,7 +86,7 @@ class GameCanvas extends Component {
   };
 
   _compAI = bool => {
-    let aiDelay = 1 + Math.random() * 1500;
+    let aiDelay = 1 + Math.random() * 1000;
     let _this = this;
     let arrowDown = new Event("keydown");
     arrowDown.key = "ArrowDown";
@@ -105,7 +105,7 @@ class GameCanvas extends Component {
     arrowUp.shiftKey = false;
     arrowUp.metaKey = false;
     this.aiTimer = setTimeout(() => {
-      if (bool) {
+      if (_this.gameBall.velocityY > 0) {
         delete _this.keys[arrowUp.keyCode];
         clearInterval(_this.upInterval);
         clearInterval(_this.downInterval);
@@ -120,7 +120,7 @@ class GameCanvas extends Component {
           window.dispatchEvent(arrowUp);
         }, 1);
       }
-      _this._compAI(!bool);
+      _this._compAI();
     }, aiDelay);
   };
 
@@ -299,23 +299,23 @@ class GameCanvas extends Component {
       this.gameBall.velocityX = this.gameBall.velocityX * -1;
       if (this.gameBall.velocityY > 0) {
         if (87 in this.keys) {
-          this.gameBall.velocityY = this.gameBall.velocityY - Math.random(); //this.player2.velocityY / 2;
+          this.gameBall.velocityY = this.gameBall.velocityY - Math.random();
         } else if (38 in this.keys) {
-          this.gameBall.velocityY = this.gameBall.velocityY - Math.random(); // this.player2.velocityY / 2;
+          this.gameBall.velocityY = this.gameBall.velocityY - Math.random();
         } else if (40 in this.keys) {
-          this.gameBall.velocityY = this.gameBall.velocityY + Math.random(); // this.player1.velocityY / 2;
+          this.gameBall.velocityY = this.gameBall.velocityY + Math.random();
         } else if (83 in this.keys) {
-          this.gameBall.velocityY = this.gameBall.velocityY + Math.random(); // this.player1.velocityY / 2;
+          this.gameBall.velocityY = this.gameBall.velocityY + Math.random();
         }
       } else {
         if (87 in this.keys) {
-          this.gameBall.velocityY = this.gameBall.velocityY + Math.random(); //this.player2.velocityY / 2;
+          this.gameBall.velocityY = this.gameBall.velocityY + Math.random();
         } else if (38 in this.keys) {
-          this.gameBall.velocityY = this.gameBall.velocityY + Math.random(); // this.player2.velocityY / 2;
+          this.gameBall.velocityY = this.gameBall.velocityY + Math.random();
         } else if (40 in this.keys) {
-          this.gameBall.velocityY = this.gameBall.velocityY - Math.random(); // this.player1.velocityY / 2;
+          this.gameBall.velocityY = this.gameBall.velocityY - Math.random();
         } else if (83 in this.keys) {
-          this.gameBall.velocityY = this.gameBall.velocityY - Math.random(); // this.player1.velocityY / 2;
+          this.gameBall.velocityY = this.gameBall.velocityY - Math.random();
         }
       }
     } else if (
