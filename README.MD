@@ -7,7 +7,7 @@ This project is designed to test your understanding of Javascript, React and gen
 
   * [Installation](#installation)
   * [Usage](#usage)
-  * [Implmentation](#implementation)
+  * [My Implementation](#implementation)
 
 ## Installation
 
@@ -25,7 +25,7 @@ Player 2(right paddle) Controls:
   * 'Arrow Down' - paddle down
 
 
-## Implmentation
+## Implementation
 
 ### Build out game menu control panel component
   * I added the requested controls plus a couple of others from other tasks
