@@ -7,7 +7,7 @@ This project is designed to test your understanding of Javascript, React and gen
 
   * [Installation](#installation)
   * [Usage](#usage)
-  * [My Implmentation](#implementation)
+  * [Implmentation](#implementation)
 
 ## Installation
 
